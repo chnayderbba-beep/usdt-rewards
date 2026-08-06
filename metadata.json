@@ -1,0 +1,6 @@
+{
+  "name": "Crypto Rewards & USDT Exchange",
+  "description": "Buy USDT at discounted rates and earn crypto rewards through TikTok clipping.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

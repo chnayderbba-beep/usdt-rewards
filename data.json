@@ -1,0 +1,127 @@
+{
+  "users": [
+    {
+      "id": "usr-admin",
+      "fullName": "Platform Admin",
+      "username": "admin",
+      "email": "admin@cryptorewards.io",
+      "phone": "+1 (555) 019-2831",
+      "role": "admin",
+      "createdAt": "2026-01-10T10:00:00.000Z",
+      "balance": 10000,
+      "totalEarnings": 0,
+      "pendingEarnings": 0
+    },
+    {
+      "id": "usr-demo",
+      "fullName": "Alex Morgan",
+      "username": "alexm",
+      "email": "demo@cryptorewards.io",
+      "phone": "+1 (555) 014-9922",
+      "role": "user",
+      "createdAt": "2026-02-01T14:30:00.000Z",
+      "balance": 350,
+      "totalEarnings": 120,
+      "pendingEarnings": 45
+    }
+  ],
+  "passwords": {
+    "usr-admin": "adminio.1234",
+    "usr-demo": "user123"
+  },
+  "orders": [
+    {
+      "id": "ORD-882910",
+      "userId": "usr-demo",
+      "username": "alexm",
+      "userEmail": "demo@cryptorewards.io",
+      "receiveAmount": 100,
+      "payAmount": 10,
+      "network": "TRC20",
+      "walletAddress": "TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333",
+      "status": "Completed",
+      "createdAt": "2026-08-04T07:00:46.041Z",
+      "expiresAt": "2026-08-04T07:15:46.041Z",
+      "txHash": "0x3a9b8f1e2c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f",
+      "notes": "Payment verified on TRC20 network"
+    },
+    {
+      "id": "ORD-882915",
+      "userId": "usr-demo",
+      "username": "alexm",
+      "userEmail": "demo@cryptorewards.io",
+      "receiveAmount": 250,
+      "payAmount": 25,
+      "network": "TRC20",
+      "walletAddress": "TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333",
+      "status": "Completed",
+      "createdAt": "2026-08-05T07:00:46.041Z",
+      "expiresAt": "2026-08-05T07:15:46.041Z",
+      "txHash": "0x7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8",
+      "notes": "Payment verified on TRC20 network"
+    }
+  ],
+  "clippingApps": [
+    {
+      "id": "CLIP-4401",
+      "userId": "usr-demo",
+      "username": "alexm",
+      "userEmail": "demo@cryptorewards.io",
+      "videoUrl": "https://www.tiktok.com/@alexm_crypto/video/7391827401928374",
+      "views": 45000,
+      "estimatedReward": 45,
+      "status": "Pending",
+      "createdAt": "2026-08-06T02:00:46.041Z",
+      "notes": "TikTok analytics screenshot uploaded"
+    }
+  ],
+  "withdrawals": [
+    {
+      "id": "WTH-1092",
+      "userId": "usr-demo",
+      "username": "alexm",
+      "userEmail": "demo@cryptorewards.io",
+      "walletAddress": "TFAx9K3jLs82PqNm10WzXyC49102837465",
+      "network": "TRC20",
+      "amount": 50,
+      "status": "Approved",
+      "createdAt": "2026-08-02T07:00:46.041Z"
+    }
+  ],
+  "settings": {
+    "trc20WalletAddress": "TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333",
+    "clippingRatePer1k": 1,
+    "minWithdrawalAmount": 20,
+    "offers": [
+      {
+        "id": "offer-1",
+        "receiveAmount": 100,
+        "payAmount": 10,
+        "discountBadge": "90% OFF",
+        "description": "Starter Boost - Get 100 USDT for just 10 USDT"
+      },
+      {
+        "id": "offer-2",
+        "receiveAmount": 250,
+        "payAmount": 25,
+        "popular": true,
+        "discountBadge": "90% OFF - POPULAR",
+        "description": "Pro Tier - High demand reward allocation"
+      },
+      {
+        "id": "offer-3",
+        "receiveAmount": 500,
+        "payAmount": 50,
+        "discountBadge": "90% OFF",
+        "description": "VIP Trader - Save $450 instantly"
+      },
+      {
+        "id": "offer-4",
+        "receiveAmount": 1000,
+        "payAmount": 100,
+        "discountBadge": "MAX SAVINGS",
+        "description": "Whale Package - Maximum reward bonus"
+      }
+    ]
+  }
+}
