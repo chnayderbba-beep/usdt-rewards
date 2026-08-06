@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { USDTOffer, PaymentOrder } from '../types';
 import { api } from '../lib/api';
 import {
@@ -20,6 +21,7 @@ interface BuyUsdtProps {
 
 export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }) => {
   const { user, showToast } = useAuth();
+  const { t } = useLanguage();
   const [offers, setOffers] = useState<USDTOffer[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -81,15 +83,15 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
     <div className="space-y-8">
       {/* Title Header */}
       <div className="text-center max-w-2xl mx-auto space-y-2">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+        <div className="inline-flex items-center space-x-2 rtl:space-x-reverse px-3.5 py-1.5 rounded-full text-xs font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
           <Zap className="w-4 h-4 text-cyan-400" />
-          <span>INSTANT TRC20 FLASH DEALS</span>
+          <span>{t('flashDeals')}</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-          Buy USDT at Exclusive Discount Rates
+          {t('buyUsdtTitle')}
         </h1>
         <p className="text-xs sm:text-sm text-gray-300">
-          Purchase USDT with 90% instant subsidy. All transactions are securely processed via USDT TRC20 network.
+          {t('buyUsdtSubtitle')}
         </p>
       </div>
 
@@ -98,13 +100,13 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
         <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 rtl:space-x-reverse">
             <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
               <Calculator className="w-5 h-5" />
             </div>
-            <div>
-              <h2 className="text-lg font-black text-white">Live USDT Rate Calculator</h2>
-              <p className="text-xs text-gray-400">Instant 90% discount formula applied</p>
+            <div className="text-left rtl:text-right">
+              <h2 className="text-lg font-black text-white">{t('calculatorTitle')}</h2>
+              <p className="text-xs text-gray-400">{t('calcSubtitle')}</p>
             </div>
           </div>
           <span className="text-xs font-mono font-bold bg-cyan-500 text-black px-2.5 py-1 rounded-lg">
@@ -115,8 +117,8 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
           {/* Input: Desired USDT */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">
-              Desired USDT to Receive
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2 text-left rtl:text-right">
+              {t('desiredAmount')}
             </label>
             <div className="relative">
               <input
@@ -128,25 +130,21 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
                 placeholder="250"
                 className="w-full bg-black/60 border border-cyan-500/40 rounded-2xl px-4 py-3.5 text-xl font-bold font-mono text-cyan-400 placeholder-gray-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
               />
-              <span className="absolute right-4 top-4 text-xs font-bold text-cyan-400/80 font-mono">
+              <span className="absolute right-4 rtl:right-auto rtl:left-4 top-4 text-xs font-bold text-cyan-400/80 font-mono">
                 USDT
               </span>
             </div>
-            <p className="text-[11px] text-gray-400 mt-1.5">Enter any custom USDT amount</p>
           </div>
 
           {/* Output: Amount to Pay */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">
-              Amount You Pay
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-2 text-left rtl:text-right">
+              {t('youWillPay')}
             </label>
             <div className="bg-black/60 border border-emerald-500/40 rounded-2xl px-4 py-3.5 text-xl font-bold font-mono text-emerald-400 flex items-center justify-between">
               <span>${customPayAmount.toFixed(2)}</span>
               <span className="text-xs font-bold text-emerald-400/80 font-mono">USDT (TRC20)</span>
             </div>
-            <p className="text-[11px] text-emerald-400 mt-1.5 font-semibold">
-              You save ${((Number(desiredUsdt) || 0) - customPayAmount).toFixed(2)} USD!
-            </p>
           </div>
         </div>
 
@@ -156,19 +154,19 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
             handleCreateOrder(Number(desiredUsdt) || 0, customPayAmount)
           }
           disabled={loading || !desiredUsdt || Number(desiredUsdt) <= 0}
-          className="mt-6 w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm sm:text-base shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+          className="mt-6 w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm sm:text-base shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse disabled:opacity-50"
         >
-          <span>Buy {desiredUsdt || 0} USDT for ${customPayAmount} USDT</span>
-          <ArrowRight className="w-5 h-5" />
+          <span>{t('buyNow')} ({desiredUsdt || 0} USDT - ${customPayAmount} USDT)</span>
+          <ArrowRight className="w-5 h-5 rtl:rotate-180" />
         </button>
       </div>
 
       {/* --- PRE-DEFINED OFFER CARDS --- */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-black text-white flex items-center space-x-2">
+          <h2 className="text-xl font-black text-white flex items-center space-x-2 rtl:space-x-reverse">
             <Coins className="w-5 h-5 text-cyan-400" />
-            <span>Recommended Preset USDT Packages</span>
+            <span>{t('discountOffers')}</span>
           </h2>
           <span className="text-xs text-gray-400 font-mono">TRC20 Instant Delivery</span>
         </div>
@@ -185,7 +183,7 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
             >
               {/* Badge */}
               <div
-                className={`absolute -top-3 left-6 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg ${
+                className={`absolute -top-3 left-6 rtl:left-auto rtl:right-6 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg ${
                   offer.popular
                     ? 'bg-emerald-500 text-black'
                     : 'bg-cyan-500 text-black'
@@ -197,7 +195,7 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
               <div className="mt-2 space-y-4">
                 <div>
                   <span className="text-xs text-gray-400 uppercase font-bold tracking-wider block">
-                    Receive Amount
+                    {t('receive')}
                   </span>
                   <div className="text-3xl font-black text-cyan-400 font-mono mt-1">
                     {offer.receiveAmount} <span className="text-sm text-gray-300 font-sans font-bold">USDT</span>
@@ -205,7 +203,7 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
                 </div>
 
                 <div className="bg-black/40 rounded-2xl p-3 border border-white/10">
-                  <span className="text-xs text-gray-400 block font-medium">You Pay</span>
+                  <span className="text-xs text-gray-400 block font-medium">{t('payOnly')}</span>
                   <span className="text-xl font-black text-white font-mono">
                     {offer.payAmount} USDT
                   </span>
@@ -219,14 +217,14 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
               <button
                 onClick={() => handleCreateOrder(offer.receiveAmount, offer.payAmount)}
                 disabled={loading}
-                className={`mt-6 w-full py-3 px-4 rounded-2xl font-black text-xs transition-all flex items-center justify-center space-x-2 ${
+                className={`mt-6 w-full py-3 px-4 rounded-2xl font-black text-xs transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse ${
                   offer.popular
                     ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_15px_rgba(34,197,94,0.3)]'
                     : 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)]'
                 }`}
               >
-                <span>Buy Now</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>{t('buyNow')}</span>
+                <ArrowRight className="w-4 h-4 rtl:rotate-180" />
               </button>
             </div>
           ))}

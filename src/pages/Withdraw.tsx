@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { WithdrawalRequest } from '../types';
 import { api } from '../lib/api';
 import {
@@ -20,6 +21,7 @@ interface WithdrawProps {
 
 export const Withdraw: React.FC<WithdrawProps> = ({ setActiveTab }) => {
   const { user, settings, showToast, refreshUser } = useAuth();
+  const { t } = useLanguage();
   const [walletAddress, setWalletAddress] = useState('');
   const [amount, setAmount] = useState<number | string>(20);
   const [submitting, setSubmitting] = useState(false);
@@ -85,9 +87,9 @@ export const Withdraw: React.FC<WithdrawProps> = ({ setActiveTab }) => {
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Title */}
       <div>
-        <h1 className="text-2xl font-black text-white flex items-center space-x-2">
+        <h1 className="text-2xl font-black text-white flex items-center space-x-2 rtl:space-x-reverse">
           <Wallet className="w-6 h-6 text-cyan-400" />
-          <span>Withdraw USDT Earnings</span>
+          <span>{t('withdrawUSDT')}</span>
         </h1>
         <p className="text-xs text-gray-400 mt-1">
           Transfer your purchased or TikTok clipping earnings to any TRC20 wallet
@@ -98,7 +100,7 @@ export const Withdraw: React.FC<WithdrawProps> = ({ setActiveTab }) => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white/[0.03] border border-cyan-500/30 rounded-2xl p-5 shadow-lg backdrop-blur-xl">
           <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-1">
-            Available Balance
+            {t('availableBalance')}
           </span>
           <span className="text-2xl font-black text-cyan-400 font-mono">
             ${user.balance.toFixed(2)} <span className="text-xs text-gray-300">USDT</span>
@@ -108,7 +110,7 @@ export const Withdraw: React.FC<WithdrawProps> = ({ setActiveTab }) => {
 
         <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-5 shadow-lg backdrop-blur-xl">
           <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-1">
-            Total Earnings
+            {t('totalEarned')}
           </span>
           <span className="text-2xl font-black text-white font-mono">
             ${(user.totalEarnings || 0).toFixed(2)} <span className="text-xs text-gray-300">USDT</span>
@@ -118,7 +120,7 @@ export const Withdraw: React.FC<WithdrawProps> = ({ setActiveTab }) => {
 
         <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-5 shadow-lg backdrop-blur-xl">
           <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider block mb-1">
-            Pending Earnings
+            {t('pending')}
           </span>
           <span className="text-2xl font-black text-purple-400 font-mono">
             ${(user.pendingEarnings || 0).toFixed(2)} <span className="text-xs text-gray-300">USDT</span>
@@ -131,7 +133,7 @@ export const Withdraw: React.FC<WithdrawProps> = ({ setActiveTab }) => {
       <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 backdrop-blur-xl">
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <div>
-            <h2 className="text-lg font-bold text-white">Withdrawal Request Form</h2>
+            <h2 className="text-lg font-bold text-white">{t('withdrawUSDT')}</h2>
             <p className="text-xs text-gray-400">Withdrawal method: USDT TRC20</p>
           </div>
           <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
@@ -142,8 +144,8 @@ export const Withdraw: React.FC<WithdrawProps> = ({ setActiveTab }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Wallet Address Field */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5">
-              Destination USDT TRC20 Wallet Address
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5 text-left rtl:text-right">
+              {t('trc20Address')}
             </label>
             <input
               type="text"
@@ -153,16 +155,13 @@ export const Withdraw: React.FC<WithdrawProps> = ({ setActiveTab }) => {
               required
               className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-mono placeholder-gray-600 focus:outline-none focus:border-cyan-400"
             />
-            <p className="text-[11px] text-gray-400 mt-1">
-              Ensure this address supports TRON TRC20 USDT deposits.
-            </p>
           </div>
 
           {/* Amount Field */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-300">
-                Amount to Withdraw
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 text-left rtl:text-right">
+                {t('withdrawAmount')}
               </label>
               <button
                 type="button"
@@ -182,20 +181,17 @@ export const Withdraw: React.FC<WithdrawProps> = ({ setActiveTab }) => {
                 required
                 className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-3 text-lg font-bold font-mono text-cyan-400 focus:outline-none focus:border-cyan-400"
               />
-              <span className="absolute right-4 top-3.5 text-xs font-bold text-gray-400 font-mono">
+              <span className="absolute right-4 rtl:right-auto rtl:left-4 top-3.5 text-xs font-bold text-gray-400 font-mono">
                 USDT
               </span>
             </div>
-            <p className="text-[11px] text-gray-400 mt-1">
-              Minimum withdrawal threshold: <strong className="text-cyan-400">${minAmount}.00 USDT</strong>
-            </p>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={submitting || user.balance < minAmount}
-            className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+            className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse disabled:opacity-50"
           >
             <Send className="w-4 h-4" />
             <span>{submitting ? 'Processing Request...' : 'Request Withdrawal'}</span>

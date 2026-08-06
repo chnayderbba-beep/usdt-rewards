@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { ClippingApplication } from '../types';
 import { api } from '../lib/api';
 import {
@@ -24,6 +25,7 @@ interface TikTokClippingProps {
 
 export const TikTokClipping: React.FC<TikTokClippingProps> = ({ setActiveTab }) => {
   const { user, showToast } = useAuth();
+  const { t } = useLanguage();
   const [videoUrl, setVideoUrl] = useState('');
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
