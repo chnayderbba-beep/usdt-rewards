@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import {
   LayoutDashboard,
   Coins,
@@ -28,19 +29,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setMobileMenuOpen
 }) => {
   const { user, logout } = useAuth();
+  const { t, isRTL } = useLanguage();
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'buy-usdt', label: 'Buy USDT', icon: Coins, badge: '90% OFF' },
-    { id: 'clipping', label: 'Clipping Offer', icon: Video, badge: '$1 / 1k' },
-    { id: 'payment-history', label: 'Payment History', icon: History },
-    { id: 'withdraw', label: 'Withdraw', icon: Wallet },
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'dashboard', label: t('dashboard'), icon: LayoutDashboard },
+    { id: 'buy-usdt', label: t('buyUsdt'), icon: Coins, badge: '90% OFF' },
+    { id: 'clipping', label: t('tiktokOffer'), icon: Video, badge: '$1 / 1k' },
+    { id: 'payment-history', label: t('paymentHistory'), icon: History },
+    { id: 'withdraw', label: t('withdraw'), icon: Wallet },
+    { id: 'profile', label: t('profile'), icon: User },
+    { id: 'settings', label: t('settings'), icon: Settings },
   ];
 
   if (user?.role === 'admin') {
-    menuItems.push({ id: 'admin', label: 'Admin Panel', icon: ShieldAlert, badge: 'ADMIN' });
+    menuItems.push({ id: 'admin', label: t('admin'), icon: ShieldAlert, badge: 'ADMIN' });
   }
 
   const handleSelect = (id: string) => {
@@ -60,13 +62,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-16 bottom-9 left-0 w-60 bg-black/20 border-r border-white/5 z-40 flex flex-col transition-transform duration-300 backdrop-blur-md lg:translate-x-0 ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed top-16 bottom-9 left-0 rtl:left-auto rtl:right-0 w-60 bg-black/20 border-r rtl:border-r-0 rtl:border-l border-white/5 z-40 flex flex-col transition-transform duration-300 backdrop-blur-md lg:translate-x-0 ${
+          mobileMenuOpen ? 'translate-x-0' : isRTL ? 'translate-x-full' : '-translate-x-full'
         }`}
       >
         <div className="p-4 space-y-1 overflow-y-auto flex-1 scrollbar-thin">
           <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-            Navigation Menu
+            {isRTL ? 'قائمة التنقل' : 'Navigation Menu'}
           </p>
 
           {menuItems.map((item) => {
@@ -83,7 +85,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
                 }`}
               >
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 rtl:space-x-reverse">
                   <Icon
                     className={`w-5 h-5 transition-transform group-hover:scale-110 ${
                       isActive ? 'text-cyan-400' : 'text-gray-400 group-hover:text-gray-200'
@@ -106,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </span>
                 ) : (
                   <ChevronRight
-                    className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity ${
+                    className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity rtl:rotate-180 ${
                       isActive ? 'opacity-100 text-cyan-400' : 'text-gray-500'
                     }`}
                   />
@@ -120,24 +122,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-4 border-t border-white/5 space-y-3">
           <div className="bg-gradient-to-br from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 p-4 rounded-2xl">
             <p className="text-[10px] text-cyan-300 font-bold uppercase tracking-wider mb-1">
-              Tier Status
+              {isRTL ? 'حالة المستوى' : 'Tier Status'}
             </p>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-white">PRO PLAN</span>
+              <span className="text-sm font-bold text-white">{isRTL ? 'خطة احترافية' : 'PRO PLAN'}</span>
               <span className="text-xs text-cyan-400 font-mono">Lv. 2</span>
             </div>
-            <p className="text-[10px] text-gray-400 mt-1">100% Instant TRC20 Verification</p>
+            <p className="text-[10px] text-gray-400 mt-1">{isRTL ? 'تأكيد TRC20 فوري 100%' : '100% Instant TRC20 Verification'}</p>
           </div>
 
           <button
             onClick={logout}
-            className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all"
+            className="w-full flex items-center justify-center space-x-2 rtl:space-x-reverse px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all"
           >
             <LogOut className="w-4 h-4" />
-            <span>Logout</span>
+            <span>{t('signOut')}</span>
           </button>
         </div>
       </aside>
     </>
   );
 };
+

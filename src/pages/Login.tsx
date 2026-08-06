@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 
 interface LoginProps {
@@ -8,6 +9,7 @@ interface LoginProps {
 
 export const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
   const { login, showToast } = useAuth();
+  const { t, isRTL } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
@@ -51,84 +53,84 @@ export const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-purple-600 mx-auto flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.3)] text-white font-black text-2xl mb-3">
             X
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Welcome Back</h2>
+          <h2 className="text-2xl font-black text-white tracking-tight">{t('welcomeBack')}</h2>
           <p className="text-xs text-gray-400 mt-1">
-            Access your USDT exchange portal & reward earnings
+            {t('accessPortal')}
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1.5 uppercase tracking-wider">
-              Email Address
+            <label className="block text-xs font-semibold text-gray-300 mb-1.5 uppercase tracking-wider text-left rtl:text-right">
+              {t('emailAddress')}
             </label>
             <div className="relative">
-              <Mail className="w-5 h-5 text-gray-500 absolute left-3.5 top-3.5" />
+              <Mail className="w-5 h-5 text-gray-500 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3.5" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
                 required
-                className="w-full bg-black/60 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
+                className="w-full bg-black/60 border border-white/10 rounded-xl pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1.5 uppercase tracking-wider">
-              Password
+            <label className="block text-xs font-semibold text-gray-300 mb-1.5 uppercase tracking-wider text-left rtl:text-right">
+              {t('password')}
             </label>
             <div className="relative">
-              <Lock className="w-5 h-5 text-gray-500 absolute left-3.5 top-3.5" />
+              <Lock className="w-5 h-5 text-gray-500 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3.5" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full bg-black/60 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
+                className="w-full bg-black/60 border border-white/10 rounded-xl pl-11 pr-4 rtl:pl-4 rtl:pr-11 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
               />
             </div>
           </div>
 
           <div className="flex items-center justify-between text-xs text-gray-400">
-            <label className="flex items-center space-x-2 cursor-pointer">
+            <label className="flex items-center space-x-2 rtl:space-x-reverse cursor-pointer">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="w-4 h-4 rounded bg-black/60 border-gray-700 text-cyan-400 focus:ring-cyan-400"
               />
-              <span>Remember me</span>
+              <span>{t('rememberMe')}</span>
             </label>
             <button
               type="button"
               onClick={() => setForgotModal(true)}
               className="text-cyan-400 hover:underline font-semibold"
             >
-              Forgot Password?
+              {t('forgotPassword')}
             </button>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+            className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse disabled:opacity-50"
           >
-            <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
-            {!loading && <ArrowRight className="w-4 h-4" />}
+            <span>{loading ? '...' : t('login')}</span>
+            {!loading && <ArrowRight className="w-4 h-4 rtl:rotate-180" />}
           </button>
         </form>
 
         <div className="mt-6 text-center text-xs text-gray-400">
-          Don't have an account?{' '}
+          {t('dontHaveAccount')}{' '}
           <button
             onClick={() => setActiveTab('register')}
             className="text-cyan-400 font-bold hover:underline"
           >
-            Create Account
+            {t('createAccount')}
           </button>
         </div>
       </div>
@@ -137,7 +139,7 @@ export const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
       {forgotModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-[#12161C] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-            <h3 className="text-lg font-bold text-white mb-2">Reset Password</h3>
+            <h3 className="text-lg font-bold text-white mb-2">{t('forgotPassword')}</h3>
             <p className="text-xs text-gray-400 mb-4">
               Enter your email address to receive password recovery instructions.
             </p>
@@ -150,7 +152,7 @@ export const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
                 required
                 className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-400"
               />
-              <div className="flex justify-end space-x-2">
+              <div className="flex justify-end space-x-2 rtl:space-x-reverse">
                 <button
                   type="button"
                   onClick={() => setForgotModal(false)}
@@ -172,3 +174,4 @@ export const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
     </div>
   );
 };
+

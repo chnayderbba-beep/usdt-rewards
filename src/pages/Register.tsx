@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { User, Mail, Lock, Coins, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 interface RegisterProps {
@@ -8,6 +9,7 @@ interface RegisterProps {
 
 export const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
   const { register, showToast } = useAuth();
+  const { t, isRTL } = useLanguage();
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -56,95 +58,95 @@ export const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-purple-600 mx-auto flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.3)] text-white font-black text-2xl mb-3">
             X
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Create Account</h2>
+          <h2 className="text-2xl font-black text-white tracking-tight">{t('createAccount')}</h2>
           <p className="text-xs text-gray-400 mt-1">
-            Join BYREWARDS to access exclusive USDT rates & TikTok payouts
+            {t('joinRewards')}
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
-            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider">
-              Full Name
+            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider text-left rtl:text-right">
+              {t('fullName')}
             </label>
             <div className="relative">
-              <User className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />
+              <User className="w-4 h-4 text-gray-500 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3" />
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="John Doe"
                 required
-                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
+                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider">
-              Username
+            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider text-left rtl:text-right">
+              {t('username')}
             </label>
             <div className="relative">
-              <span className="text-gray-500 font-bold absolute left-3.5 top-2.5 text-xs">@</span>
+              <span className="text-gray-500 font-bold absolute left-3.5 rtl:left-auto rtl:right-3.5 top-2.5 text-xs">@</span>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ''))}
                 placeholder="johndoe"
                 required
-                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
+                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider">
-              Email Address
+            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider text-left rtl:text-right">
+              {t('emailAddress')}
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />
+              <Mail className="w-4 h-4 text-gray-500 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
                 required
-                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
+                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider">
-              Password
+            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider text-left rtl:text-right">
+              {t('password')}
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />
+              <Lock className="w-4 h-4 text-gray-500 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
+                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider">
-              Confirm Password
+            <label className="block text-[11px] font-semibold text-gray-300 mb-1 uppercase tracking-wider text-left rtl:text-right">
+              {t('confirmPassword')}
             </label>
             <div className="relative">
-              <CheckCircle2 className="w-4 h-4 text-gray-500 absolute left-3.5 top-3" />
+              <CheckCircle2 className="w-4 h-4 text-gray-500 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3" />
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
+                className="w-full bg-black/60 border border-white/10 rounded-xl pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-all"
               />
             </div>
           </div>
@@ -152,23 +154,24 @@ export const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+            className="w-full mt-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse disabled:opacity-50"
           >
-            <span>{loading ? 'Creating Account...' : 'Create Account'}</span>
-            {!loading && <ArrowRight className="w-4 h-4" />}
+            <span>{loading ? '...' : t('createAccount')}</span>
+            {!loading && <ArrowRight className="w-4 h-4 rtl:rotate-180" />}
           </button>
         </form>
 
         <div className="mt-5 text-center text-xs text-gray-400">
-          Already registered?{' '}
+          {t('alreadyHaveAccount')}{' '}
           <button
             onClick={() => setActiveTab('login')}
             className="text-cyan-400 font-bold hover:underline"
           >
-            Sign In Here
+            {t('login')}
           </button>
         </div>
       </div>
     </div>
   );
 };
+

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { PaymentOrder } from './types';
@@ -19,6 +20,7 @@ import { SettingsPage } from './pages/SettingsPage';
 
 function MainAppContent() {
   const { user, loading } = useAuth();
+  const { isRTL, t } = useLanguage();
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [currentOrder, setCurrentOrder] = useState<PaymentOrder | null>(null);
@@ -28,7 +30,7 @@ function MainAppContent() {
       <div className="min-h-screen bg-[#0B0E11] text-white flex flex-col items-center justify-center space-y-4">
         <div className="w-12 h-12 rounded-full border-4 border-amber-500 border-t-transparent animate-spin" />
         <p className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
-          Loading BYREWARDS Platform...
+          Loading Platform...
         </p>
       </div>
     );
@@ -84,7 +86,7 @@ function MainAppContent() {
           {/* Main Workspace Area */}
           <main
             className={`flex-1 p-4 sm:p-6 lg:p-8 transition-all duration-300 pb-12 ${
-              user && !isAuthPage ? 'lg:ml-64' : 'max-w-7xl mx-auto w-full'
+              user && !isAuthPage ? (isRTL ? 'lg:mr-64' : 'lg:ml-64') : 'max-w-7xl mx-auto w-full'
             }`}
           >
             {activeTab === 'login' && <Login setActiveTab={setActiveTab} />}
@@ -126,19 +128,18 @@ function MainAppContent() {
 
         {/* Footer Status Bar */}
         <footer className="h-9 bg-black/40 backdrop-blur-md border-t border-white/5 flex items-center justify-between px-4 sm:px-6 text-[10px] text-gray-400 font-mono tracking-tight z-30 sticky bottom-0">
-          <div className="flex items-center space-x-4">
-            <span className="flex items-center space-x-1.5">
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
+            <span className="flex items-center space-x-1.5 rtl:space-x-reverse">
               <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-              <span className="text-gray-300 font-bold">TRC20 GATEWAY</span>
-              <span className="text-emerald-400 font-bold">ONLINE</span>
+              <span className="text-gray-300 font-bold">{t('gatewayOnline')}</span>
             </span>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
             <span>
               USDT/USD: <span className="text-cyan-400 font-bold">$1.0002</span>
             </span>
             <span className="hidden md:inline text-gray-500">
-              © 2024 BYREWARDS - Secure TRC20 Gateway
+              © 2024 NEXUS REWARDS - TRC20 Gateway
             </span>
           </div>
         </footer>
@@ -149,8 +150,11 @@ function MainAppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainAppContent />
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <MainAppContent />
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
+
