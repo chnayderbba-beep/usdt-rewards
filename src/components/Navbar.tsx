@@ -128,12 +128,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="flex items-center space-x-2.5 rtl:space-x-reverse text-left rtl:text-right focus:outline-none group"
             >
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-black text-lg group-hover:scale-105 transition-transform">
-                X
+                ₮
               </div>
               <div>
                 <div className="flex items-center space-x-1.5 rtl:space-x-reverse">
-                  <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent italic">
-                    NEXUS REWARDS
+                  <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-white via-cyan-200 to-blue-300 bg-clip-text text-transparent italic">
+                    USDT REWARDS
                   </span>
                   <span className="px-1.5 py-0.5 text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 rounded-md uppercase">
                     PRO

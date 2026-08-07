@@ -20,6 +20,7 @@ export interface USDTOffer {
   popular?: boolean;
   discountBadge: string;
   description?: string;
+  expiresAt?: string; // ISO string for expiration time
 }
 
 export type OrderStatus = 'Pending' | 'Completed' | 'Rejected' | 'Cancelled';

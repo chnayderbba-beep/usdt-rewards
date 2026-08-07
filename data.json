@@ -38,7 +38,7 @@
       "receiveAmount": 100,
       "payAmount": 10,
       "network": "TRC20",
-      "walletAddress": "TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333",
+      "walletAddress": "TG1LiM1h3iLf654gAx1msadrDf65q2AbAC",
       "status": "Completed",
       "createdAt": "2026-08-04T07:00:46.041Z",
       "expiresAt": "2026-08-04T07:15:46.041Z",
@@ -53,7 +53,7 @@
       "receiveAmount": 250,
       "payAmount": 25,
       "network": "TRC20",
-      "walletAddress": "TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333",
+      "walletAddress": "TG1LiM1h3iLf654gAx1msadrDf65q2AbAC",
       "status": "Completed",
       "createdAt": "2026-08-05T07:00:46.041Z",
       "expiresAt": "2026-08-05T07:15:46.041Z",
@@ -89,7 +89,7 @@
     }
   ],
   "settings": {
-    "trc20WalletAddress": "TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333",
+    "trc20WalletAddress": "TG1LiM1h3iLf654gAx1msadrDf65q2AbAC",
     "clippingRatePer1k": 1,
     "minWithdrawalAmount": 20,
     "offers": [

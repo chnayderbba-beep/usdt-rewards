@@ -66,7 +66,7 @@ const translations: Record<Language, Record<string, string>> = {
     approved: 'Approved',
     rejected: 'Rejected',
     accessPortal: 'Access your USDT exchange portal & reward earnings',
-    joinRewards: 'Join NEXUS REWARDS to access exclusive USDT rates & TikTok payouts',
+    joinRewards: 'Join USDT REWARDS to access exclusive USDT rates & TikTok payouts',
 
     // Dashboard & Stats
     verifiedMember: 'Verified Pro Member',
@@ -119,6 +119,36 @@ const translations: Record<Language, Record<string, string>> = {
     accountSettings: 'Account Settings',
     changePassword: 'Change Password',
     saveChanges: 'Save Changes',
+
+    // Payment Page
+    txHashRequired: 'Transaction Hash / TxID (Required)',
+    txHashPlaceholder: 'Paste TRC20 TxID (e.g. 0x3a9b8f...)',
+    txHashError: 'Please enter your Transaction Hash / TxID before marking as paid.',
+    iHavePaid: 'I Have Paid',
+
+    // Offers & Timer
+    createNewOffer: 'Create New Discount Offer',
+    offerDuration: 'Offer Duration / Timer',
+    noExpiry: 'No Expiry (Permanent Offer)',
+    expiresIn: 'Expires in',
+    expiredOffer: 'Expired Offer',
+    deleteOffer: 'Delete Offer',
+    badgeLabel: 'Badge Label (e.g. 90% OFF)',
+    isPopular: 'Highlight as Hot/Popular Deal',
+    manageOffers: 'Manage Discount Offers',
+    noOffersYet: 'No active offers available currently.',
+    durationMinutes: 'Duration (Minutes)',
+
+    // TikTok Rules
+    tiktokRulesTitle: 'Mandatory TikTok Video Rules & Guidelines',
+    ruleTalkingPlatformTitle: 'Show & Talk About Platform',
+    ruleTalkingPlatformDesc: 'The video must feature talking about USDT REWARDS and clearly show the platform on screen to viewers.',
+    ruleCreativeIntroTitle: 'Creative Introduction Way',
+    ruleCreativeIntroDesc: 'The video should feature a creative, engaging, and unique way of introducing the platform.',
+    ruleLinkInBioTitle: 'Site Link in Bio Required',
+    ruleLinkInBioDesc: 'The official link of the site must be placed directly in your TikTok profile bio.',
+    rule30DaysTitle: '30-Day Publication Rule',
+    rule30DaysDesc: 'The video must remain published on your TikTok channel for at least 30 days without deletion.',
   },
   ar: {
     // Navigation & Common
@@ -176,7 +206,7 @@ const translations: Record<Language, Record<string, string>> = {
     approved: 'مقبول',
     rejected: 'مرفوض',
     accessPortal: 'الدخول إلى بوابة تبادل USDT وأرباح المكافآت',
-    joinRewards: 'انضم إلى NEXUS REWARDS للحصول على أسعار USDT الحصرية ومدفوعات تيك توك',
+    joinRewards: 'انضم إلى USDT REWARDS للحصول على أسعار USDT الحصرية ومدفوعات تيك توك',
 
     // Dashboard & Stats
     verifiedMember: 'عضو محترف موثق',
@@ -229,6 +259,36 @@ const translations: Record<Language, Record<string, string>> = {
     accountSettings: 'إعدادات الحساب',
     changePassword: 'تغيير كلمة المرور',
     saveChanges: 'حفظ التغييرات',
+
+    // Payment Page
+    txHashRequired: 'معرف المعاملة / TxID (مطلوب)',
+    txHashPlaceholder: 'الصق رمز معاملة TRC20 (مثال: 0x3a9b8f...)',
+    txHashError: 'يرجى إدخال معرف المعاملة / TxID قبل إتمام وتأكيد الدفع.',
+    iHavePaid: 'لقد قمت بالدفع',
+
+    // Offers & Timer
+    createNewOffer: 'إنشاء عرض خصم جديد',
+    offerDuration: 'مدة العرض / المؤقت',
+    noExpiry: 'بدون انتهاء (عرض دائم)',
+    expiresIn: 'ينتهي خلال',
+    expiredOffer: 'عرض منتهي الصلاحية',
+    deleteOffer: 'حذف العرض',
+    badgeLabel: 'عنوان الشارة (مثال: خصم 90%)',
+    isPopular: 'تمييز كـ عرض ساخن / شائع',
+    manageOffers: 'إدارة عروض الخصم',
+    noOffersYet: 'لا توجد عروض مجهزة حالياً.',
+    durationMinutes: 'المدة (بالدقائق)',
+
+    // TikTok Rules
+    tiktokRulesTitle: 'الشروط والقواعد الإلزامية لفيديوهات تيك توك',
+    ruleTalkingPlatformTitle: 'التحدث عن المنصة وعرض الموقع',
+    ruleTalkingPlatformDesc: 'يجب أن يتضمن الفيديو التحدث عن منصة USDT REWARDS وإظهار الموقع بوضوح للمشاهدين على الشاشة.',
+    ruleCreativeIntroTitle: 'طريقة تقديم إبداعية',
+    ruleCreativeIntroDesc: 'يجب أن يكون الفيديو إبداعياً ومبتكراً في طريقة تقديم المنصة للمشاهدين.',
+    ruleLinkInBioTitle: 'وضع رابط الموقع في البايو',
+    ruleLinkInBioDesc: 'يجب وضع الرابط الرسمي للموقع مباشرة في السيرة الذاتية (Bio) بحسابك على تيك توك.',
+    rule30DaysTitle: 'شرط البقاء 30 يوماً',
+    rule30DaysDesc: 'يجب أن يظل الفيديو منشوراً بشكل عام على قناتك لمدة 30 يوماً على الأقل دون حذفه.',
   }
 };
 

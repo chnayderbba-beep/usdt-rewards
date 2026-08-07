@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import {
   User,
   PaymentOrder,
   ClippingApplication,
   WithdrawalRequest,
   DashboardStats,
-  SystemSettings
+  SystemSettings,
+  USDTOffer
 } from '../types';
 import { api } from '../lib/api';
 import {
@@ -27,11 +29,15 @@ import {
   TrendingUp,
   RefreshCw,
   Coins,
-  FileText
+  FileText,
+  Plus,
+  Trash2,
+  Zap
 } from 'lucide-react';
 
 export const AdminPanel: React.FC = () => {
   const { user, showToast, refreshSettings } = useAuth();
+  const { t } = useLanguage();
   const [activeAdminTab, setActiveAdminTab] = useState<
     'stats' | 'orders' | 'clipping' | 'withdrawals' | 'users' | 'settings'
   >('stats');
@@ -42,6 +48,7 @@ export const AdminPanel: React.FC = () => {
   const [clippingApps, setClippingApps] = useState<ClippingApplication[]>([]);
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
   const [settings, setSettings] = useState<SystemSettings | null>(null);
+  const [offersList, setOffersList] = useState<USDTOffer[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,6 +61,14 @@ export const AdminPanel: React.FC = () => {
   const [clippingRate, setClippingRate] = useState(1.0);
   const [minWithdrawal, setMinWithdrawal] = useState(20.0);
 
+  // New Offer Form State
+  const [newOfferReceive, setNewOfferReceive] = useState<number | string>(500);
+  const [newOfferPay, setNewOfferPay] = useState<number | string>(50);
+  const [newOfferBadge, setNewOfferBadge] = useState('90% OFF');
+  const [newOfferPopular, setNewOfferPopular] = useState(false);
+  const [newOfferDesc, setNewOfferDesc] = useState('');
+  const [newOfferDuration, setNewOfferDuration] = useState<number | string>(30); // 30 minutes default
+
   const loadAdminData = async () => {
     setLoading(true);
     try {
@@ -63,14 +78,16 @@ export const AdminPanel: React.FC = () => {
         ordersRes,
         clippingRes,
         withdrawalsRes,
-        settingsRes
+        settingsRes,
+        offersRes
       ] = await Promise.all([
         api.getAdminStats(),
         api.getAdminUsers(),
         api.getAdminOrders(),
         api.getAdminClippingApps(),
         api.getAdminWithdrawals(),
-        api.getSettings()
+        api.getSettings(),
+        api.getAdminOffers()
       ]);
 
       setStats(statsRes.stats);
@@ -79,6 +96,7 @@ export const AdminPanel: React.FC = () => {
       setClippingApps(clippingRes.applications || []);
       setWithdrawals(withdrawalsRes.withdrawals || []);
       setSettings(settingsRes);
+      setOffersList(offersRes.offers || []);
 
       setTrc20Address(settingsRes.trc20WalletAddress);
       setClippingRate(settingsRes.clippingRatePer1k);
@@ -87,6 +105,47 @@ export const AdminPanel: React.FC = () => {
       showToast(e.message || 'Failed to load admin data', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateOffer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const receiveNum = Number(newOfferReceive);
+    const payNum = Number(newOfferPay);
+    const durationNum = Number(newOfferDuration);
+
+    if (isNaN(receiveNum) || receiveNum <= 0 || isNaN(payNum) || payNum <= 0) {
+      showToast('Please enter valid USDT receive and pay amounts', 'error');
+      return;
+    }
+
+    try {
+      await api.createOffer({
+        receiveAmount: receiveNum,
+        payAmount: payNum,
+        discountBadge: newOfferBadge || 'SPECIAL DEAL',
+        popular: newOfferPopular,
+        description: newOfferDesc || undefined,
+        durationMinutes: durationNum > 0 ? durationNum : undefined
+      });
+
+      showToast('New USDT discount offer created successfully!', 'success');
+      setNewOfferDesc('');
+      await loadAdminData();
+      await refreshSettings();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to create offer', 'error');
+    }
+  };
+
+  const handleDeleteOffer = async (offerId: string) => {
+    try {
+      await api.deleteOffer(offerId);
+      showToast('Offer deleted successfully!', 'success');
+      await loadAdminData();
+      await refreshSettings();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to delete offer', 'error');
     }
   };
 
@@ -603,62 +662,260 @@ export const AdminPanel: React.FC = () => {
 
       {/* --- TAB 6: SETTINGS & CONFIGURATION --- */}
       {activeAdminTab === 'settings' && (
-        <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 max-w-2xl backdrop-blur-xl">
-          <h3 className="text-lg font-bold text-white flex items-center space-x-2">
-            <Settings className="w-5 h-5 text-cyan-400" />
-            <span>Platform Financial Settings</span>
-          </h3>
+        <div className="space-y-6 max-w-4xl">
+          {/* General Financial Settings */}
+          <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 backdrop-blur-xl">
+            <h3 className="text-lg font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
+              <Settings className="w-5 h-5 text-cyan-400" />
+              <span>Platform Financial Settings</span>
+            </h3>
 
-          <form onSubmit={handleSaveSettings} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
-                TRC20 Wallet Address (For User USDT Deposits)
-              </label>
-              <input
-                type="text"
-                value={trc20Address}
-                onChange={(e) => setTrc20Address(e.target.value)}
-                required
-                className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-cyan-400 font-mono focus:outline-none focus:border-cyan-400"
-              />
+            <form onSubmit={handleSaveSettings} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
+                  TRC20 Wallet Address (For User USDT Deposits)
+                </label>
+                <input
+                  type="text"
+                  value={trc20Address}
+                  onChange={(e) => setTrc20Address(e.target.value)}
+                  required
+                  className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-cyan-400 font-mono focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
+                    TikTok Reward Rate ($ USD per 1,000 Views)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.10"
+                    value={clippingRate}
+                    onChange={(e) => setClippingRate(parseFloat(e.target.value))}
+                    required
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
+                    Minimum Withdrawal Threshold ($ USD)
+                  </label>
+                  <input
+                    type="number"
+                    step="1"
+                    value={minWithdrawal}
+                    onChange={(e) => setMinWithdrawal(parseFloat(e.target.value))}
+                    required
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-xs shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save System Settings</span>
+              </button>
+            </form>
+          </div>
+
+          {/* Manage Offers & Expiration Timers */}
+          <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 backdrop-blur-xl">
+            <div className="flex items-center justify-between pb-4 border-b border-white/10">
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
+                  <Coins className="w-5 h-5 text-cyan-400" />
+                  <span>{t('manageOffers')}</span>
+                </h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Create discount USDT packages with optional expiration timers. When time ends, offers disappear automatically.
+                </p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
-                TikTok Reward Rate ($ USD per 1,000 Views)
-              </label>
-              <input
-                type="number"
-                step="0.10"
-                value={clippingRate}
-                onChange={(e) => setClippingRate(parseFloat(e.target.value))}
-                required
-                className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-cyan-400"
-              />
-            </div>
+            {/* Create New Offer Form */}
+            <form onSubmit={handleCreateOffer} className="bg-black/40 border border-white/10 rounded-2xl p-5 space-y-4">
+              <h4 className="text-sm font-extrabold text-cyan-400 flex items-center space-x-2 rtl:space-x-reverse">
+                <Plus className="w-4 h-4" />
+                <span>{t('createNewOffer')}</span>
+              </h4>
 
-            <div>
-              <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
-                Minimum Withdrawal Threshold ($ USD)
-              </label>
-              <input
-                type="number"
-                step="1"
-                value={minWithdrawal}
-                onChange={(e) => setMinWithdrawal(parseFloat(e.target.value))}
-                required
-                className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-cyan-400"
-              />
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
+                    Receive (USDT)
+                  </label>
+                  <input
+                    type="number"
+                    value={newOfferReceive}
+                    onChange={(e) => setNewOfferReceive(e.target.value)}
+                    placeholder="e.g. 500"
+                    required
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-cyan-400 font-mono font-bold focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
 
-            <button
-              type="submit"
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-xs shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2"
-            >
-              <Save className="w-4 h-4" />
-              <span>Save System Settings</span>
-            </button>
-          </form>
+                <div>
+                  <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
+                    Pay Amount (USDT)
+                  </label>
+                  <input
+                    type="number"
+                    value={newOfferPay}
+                    onChange={(e) => setNewOfferPay(e.target.value)}
+                    placeholder="e.g. 50"
+                    required
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white font-mono font-bold focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
+                    {t('badgeLabel')}
+                  </label>
+                  <input
+                    type="text"
+                    value={newOfferBadge}
+                    onChange={(e) => setNewOfferBadge(e.target.value)}
+                    placeholder="e.g. 90% OFF"
+                    required
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
+                    {t('offerDuration')}
+                  </label>
+                  <select
+                    value={newOfferDuration}
+                    onChange={(e) => setNewOfferDuration(e.target.value)}
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400 font-sans"
+                  >
+                    <option value={0}>{t('noExpiry')}</option>
+                    <option value={5}>5 Minutes (Flash Sale)</option>
+                    <option value={15}>15 Minutes</option>
+                    <option value={30}>30 Minutes</option>
+                    <option value={60}>1 Hour</option>
+                    <option value={180}>3 Hours</option>
+                    <option value={360}>6 Hours</option>
+                    <option value={1440}>24 Hours (1 Day)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold uppercase text-gray-300 mb-1">
+                    Description (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={newOfferDesc}
+                    onChange={(e) => setNewOfferDesc(e.target.value)}
+                    placeholder="e.g. Instant TRC20 transfer with priority validation"
+                    className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2 rtl:space-x-reverse pt-4 sm:pt-2">
+                  <input
+                    type="checkbox"
+                    id="newOfferPopular"
+                    checked={newOfferPopular}
+                    onChange={(e) => setNewOfferPopular(e.target.checked)}
+                    className="w-4 h-4 accent-cyan-400 bg-black border-white/20 rounded"
+                  />
+                  <label htmlFor="newOfferPopular" className="text-xs font-bold text-gray-300 cursor-pointer">
+                    {t('isPopular')}
+                  </label>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-xs shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-1.5 rtl:space-x-reverse"
+              >
+                <Plus className="w-4 h-4" />
+                <span>{t('createNewOffer')}</span>
+              </button>
+            </form>
+
+            {/* List of Existing Offers */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                Current Active & Scheduled Offers ({offersList.length})
+              </h4>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-white/10 text-gray-400 font-semibold uppercase">
+                      <th className="pb-3 px-3">Offer ID</th>
+                      <th className="pb-3 px-3">Receive</th>
+                      <th className="pb-3 px-3">Pay Amount</th>
+                      <th className="pb-3 px-3">Badge</th>
+                      <th className="pb-3 px-3">Expiry / Timer</th>
+                      <th className="pb-3 px-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 font-mono">
+                    {offersList.map((offer) => {
+                      const isExpired = offer.expiresAt && new Date(offer.expiresAt).getTime() <= Date.now();
+                      return (
+                        <tr key={offer.id}>
+                          <td className="py-3 px-3 font-bold text-cyan-400">{offer.id}</td>
+                          <td className="py-3 px-3 text-white font-bold">{offer.receiveAmount} USDT</td>
+                          <td className="py-3 px-3 text-emerald-400 font-bold">${offer.payAmount} USDT</td>
+                          <td className="py-3 px-3 font-sans">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                              {offer.discountBadge}
+                            </span>
+                            {offer.popular && (
+                              <span className="ml-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                HOT
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3 px-3 font-sans">
+                            {offer.expiresAt ? (
+                              isExpired ? (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                                  {t('expiredOffer')}
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center space-x-1 w-fit">
+                                  <Clock className="w-3 h-3" />
+                                  <span>{new Date(offer.expiresAt).toLocaleTimeString()}</span>
+                                </span>
+                              )
+                            ) : (
+                              <span className="text-gray-500 text-[11px] italic">{t('noExpiry')}</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-3 text-right font-sans">
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteOffer(offer.id)}
+                              className="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-[11px] font-bold flex items-center space-x-1 ml-auto rtl:ml-0 rtl:mr-auto"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>{t('deleteOffer')}</span>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

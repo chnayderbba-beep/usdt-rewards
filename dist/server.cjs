@@ -101,7 +101,7 @@ var initialData = {
       receiveAmount: 100,
       payAmount: 10,
       network: "TRC20",
-      walletAddress: "TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333",
+      walletAddress: "TG1LiM1h3iLf654gAx1msadrDf65q2AbAC",
       status: "Completed",
       createdAt: new Date(Date.now() - 864e5 * 2).toISOString(),
       expiresAt: new Date(Date.now() - 864e5 * 2 + 9e5).toISOString(),
@@ -116,7 +116,7 @@ var initialData = {
       receiveAmount: 250,
       payAmount: 25,
       network: "TRC20",
-      walletAddress: "TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333",
+      walletAddress: "TG1LiM1h3iLf654gAx1msadrDf65q2AbAC",
       status: "Completed",
       createdAt: new Date(Date.now() - 864e5 * 1).toISOString(),
       expiresAt: new Date(Date.now() - 864e5 * 1 + 9e5).toISOString(),
@@ -152,7 +152,7 @@ var initialData = {
     }
   ],
   settings: {
-    trc20WalletAddress: "TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333",
+    trc20WalletAddress: "TG1LiM1h3iLf654gAx1msadrDf65q2AbAC",
     clippingRatePer1k: 1,
     minWithdrawalAmount: 20,
     offers: defaultOffers
@@ -228,7 +228,33 @@ var DB = class {
   }
   // Offers
   getOffers() {
+    const offers = this.data.settings.offers || defaultOffers;
+    const now = Date.now();
+    return offers.filter((offer) => {
+      if (!offer.expiresAt) return true;
+      return new Date(offer.expiresAt).getTime() > now;
+    });
+  }
+  getAllOffersAdmin() {
     return this.data.settings.offers || defaultOffers;
+  }
+  createOffer(offerData) {
+    const newOffer = {
+      ...offerData,
+      id: `OFFER-${Date.now()}-${Math.floor(Math.random() * 1e3)}`
+    };
+    if (!this.data.settings.offers) {
+      this.data.settings.offers = [];
+    }
+    this.data.settings.offers.push(newOffer);
+    this.saveData(this.data);
+    return newOffer;
+  }
+  deleteOffer(offerId) {
+    if (this.data.settings.offers) {
+      this.data.settings.offers = this.data.settings.offers.filter((o) => o.id !== offerId);
+      this.saveData(this.data);
+    }
   }
   // Orders
   createOrder(userId, receiveAmount, payAmount) {
@@ -604,6 +630,40 @@ app.post("/api/admin/withdrawals/:id/status", authenticateUser, requireAdmin, (r
     }
     const withdrawal = db.updateWithdrawalStatus(req.params.id, status, notes);
     res.json({ withdrawal });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+app.get("/api/admin/offers", authenticateUser, requireAdmin, (_req, res) => {
+  res.json({ offers: db.getAllOffersAdmin() });
+});
+app.post("/api/admin/offers", authenticateUser, requireAdmin, (req, res) => {
+  try {
+    const { receiveAmount, payAmount, popular, discountBadge, description, durationMinutes } = req.body;
+    if (!receiveAmount || !payAmount) {
+      return res.status(400).json({ error: "Receive amount and pay amount are required" });
+    }
+    let expiresAt = void 0;
+    if (durationMinutes && Number(durationMinutes) > 0) {
+      expiresAt = new Date(Date.now() + Number(durationMinutes) * 60 * 1e3).toISOString();
+    }
+    const offer = db.createOffer({
+      receiveAmount: Number(receiveAmount),
+      payAmount: Number(payAmount),
+      popular: Boolean(popular),
+      discountBadge: discountBadge || "FLASH DEAL",
+      description,
+      expiresAt
+    });
+    res.status(201).json({ offer });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+app.delete("/api/admin/offers/:id", authenticateUser, requireAdmin, (req, res) => {
+  try {
+    db.deleteOffer(req.params.id);
+    res.json({ success: true });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

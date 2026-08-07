@@ -11,7 +11,8 @@ import {
   Zap,
   ShieldCheck,
   CheckCircle2,
-  Lock
+  Lock,
+  Clock
 } from 'lucide-react';
 
 interface BuyUsdtProps {
@@ -24,6 +25,7 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
   const { t } = useLanguage();
   const [offers, setOffers] = useState<USDTOffer[]>([]);
   const [loading, setLoading] = useState(false);
+  const [now, setNow] = useState(Date.now());
 
   // Live Calculator State
   const [desiredUsdt, setDesiredUsdt] = useState<number | string>(250);
@@ -39,7 +41,34 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
       }
     };
     fetchOffers();
+
+    // Ticking interval every second for live countdown
+    const timer = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
+
+  const formatRemainingTime = (expiresAtStr: string) => {
+    const diff = new Date(expiresAtStr).getTime() - now;
+    if (diff <= 0) return null;
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${seconds}s`;
+    }
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
+
+  const activeOffers = offers.filter((o) => {
+    if (!o.expiresAt) return true;
+    return new Date(o.expiresAt).getTime() > now;
+  });
 
   // Update calculation instantly as user types
   const handleCalculatorInputChange = (val: string) => {
@@ -172,62 +201,82 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {offers.map((offer) => (
-            <div
-              key={offer.id}
-              className={`bg-white/[0.03] border rounded-3xl p-6 relative flex flex-col justify-between backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${
-                offer.popular
-                  ? 'border-emerald-500/50 shadow-2xl shadow-emerald-500/10 ring-1 ring-emerald-500/30'
-                  : 'border-white/5 hover:border-cyan-500/40 shadow-xl'
-              }`}
-            >
-              {/* Badge */}
-              <div
-                className={`absolute -top-3 left-6 rtl:left-auto rtl:right-6 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg ${
-                  offer.popular
-                    ? 'bg-emerald-500 text-black'
-                    : 'bg-cyan-500 text-black'
-                }`}
-              >
-                {offer.discountBadge}
-              </div>
-
-              <div className="mt-2 space-y-4">
-                <div>
-                  <span className="text-xs text-gray-400 uppercase font-bold tracking-wider block">
-                    {t('receive')}
-                  </span>
-                  <div className="text-3xl font-black text-cyan-400 font-mono mt-1">
-                    {offer.receiveAmount} <span className="text-sm text-gray-300 font-sans font-bold">USDT</span>
-                  </div>
-                </div>
-
-                <div className="bg-black/40 rounded-2xl p-3 border border-white/10">
-                  <span className="text-xs text-gray-400 block font-medium">{t('payOnly')}</span>
-                  <span className="text-xl font-black text-white font-mono">
-                    {offer.payAmount} USDT
-                  </span>
-                </div>
-
-                <p className="text-xs text-gray-400 leading-snug">
-                  {offer.description || 'Includes priority processing on TRC20 network.'}
-                </p>
-              </div>
-
-              <button
-                onClick={() => handleCreateOrder(offer.receiveAmount, offer.payAmount)}
-                disabled={loading}
-                className={`mt-6 w-full py-3 px-4 rounded-2xl font-black text-xs transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse ${
-                  offer.popular
-                    ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_15px_rgba(34,197,94,0.3)]'
-                    : 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)]'
-                }`}
-              >
-                <span>{t('buyNow')}</span>
-                <ArrowRight className="w-4 h-4 rtl:rotate-180" />
-              </button>
+          {activeOffers.length === 0 ? (
+            <div className="col-span-full text-center py-12 bg-white/[0.02] border border-white/5 rounded-3xl">
+              <Clock className="w-8 h-8 text-cyan-400 mx-auto mb-2 opacity-60" />
+              <p className="text-sm text-gray-400 font-semibold">{t('noOffersYet')}</p>
             </div>
-          ))}
+          ) : (
+            activeOffers.map((offer) => {
+              const remainingTimeStr = offer.expiresAt ? formatRemainingTime(offer.expiresAt) : null;
+
+              return (
+                <div
+                  key={offer.id}
+                  className={`bg-white/[0.03] border rounded-3xl p-6 relative flex flex-col justify-between backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${
+                    offer.popular
+                      ? 'border-emerald-500/50 shadow-2xl shadow-emerald-500/10 ring-1 ring-emerald-500/30'
+                      : 'border-white/5 hover:border-cyan-500/40 shadow-xl'
+                  }`}
+                >
+                  {/* Badge & Timer Header */}
+                  <div className="flex items-center justify-between -mt-3 mb-2">
+                    <div
+                      className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg ${
+                        offer.popular
+                          ? 'bg-emerald-500 text-black'
+                          : 'bg-cyan-500 text-black'
+                      }`}
+                    >
+                      {offer.discountBadge}
+                    </div>
+
+                    {remainingTimeStr && (
+                      <div className="inline-flex items-center space-x-1 rtl:space-x-reverse px-2.5 py-1 rounded-full text-[10px] font-black font-mono bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
+                        <Clock className="w-3 h-3 text-amber-400" />
+                        <span>{remainingTimeStr}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-2 space-y-4">
+                    <div>
+                      <span className="text-xs text-gray-400 uppercase font-bold tracking-wider block">
+                        {t('receive')}
+                      </span>
+                      <div className="text-3xl font-black text-cyan-400 font-mono mt-1">
+                        {offer.receiveAmount} <span className="text-sm text-gray-300 font-sans font-bold">USDT</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-black/40 rounded-2xl p-3 border border-white/10">
+                      <span className="text-xs text-gray-400 block font-medium">{t('payOnly')}</span>
+                      <span className="text-xl font-black text-white font-mono">
+                        {offer.payAmount} USDT
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-gray-400 leading-snug">
+                      {offer.description || 'Includes priority processing on TRC20 network.'}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => handleCreateOrder(offer.receiveAmount, offer.payAmount)}
+                    disabled={loading}
+                    className={`mt-6 w-full py-3 px-4 rounded-2xl font-black text-xs transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse ${
+                      offer.popular
+                        ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_15px_rgba(34,197,94,0.3)]'
+                        : 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)]'
+                    }`}
+                  >
+                    <span>{t('buyNow')}</span>
+                    <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                  </button>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 

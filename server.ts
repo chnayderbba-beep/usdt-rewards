@@ -263,6 +263,46 @@ app.post('/api/admin/withdrawals/:id/status', authenticateUser, requireAdmin, (r
   }
 });
 
+app.get('/api/admin/offers', authenticateUser, requireAdmin, (_req, res) => {
+  res.json({ offers: db.getAllOffersAdmin() });
+});
+
+app.post('/api/admin/offers', authenticateUser, requireAdmin, (req, res) => {
+  try {
+    const { receiveAmount, payAmount, popular, discountBadge, description, durationMinutes } = req.body;
+    if (!receiveAmount || !payAmount) {
+      return res.status(400).json({ error: 'Receive amount and pay amount are required' });
+    }
+
+    let expiresAt: string | undefined = undefined;
+    if (durationMinutes && Number(durationMinutes) > 0) {
+      expiresAt = new Date(Date.now() + Number(durationMinutes) * 60 * 1000).toISOString();
+    }
+
+    const offer = db.createOffer({
+      receiveAmount: Number(receiveAmount),
+      payAmount: Number(payAmount),
+      popular: Boolean(popular),
+      discountBadge: discountBadge || 'FLASH DEAL',
+      description,
+      expiresAt
+    });
+
+    res.status(201).json({ offer });
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.delete('/api/admin/offers/:id', authenticateUser, requireAdmin, (req, res) => {
+  try {
+    db.deleteOffer(req.params.id);
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 app.put('/api/admin/settings', authenticateUser, requireAdmin, (req, res) => {
   try {
     const { trc20WalletAddress, clippingRatePer1k, minWithdrawalAmount, offers } = req.body;

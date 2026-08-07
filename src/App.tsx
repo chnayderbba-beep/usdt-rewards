@@ -139,7 +139,7 @@ function MainAppContent() {
               USDT/USD: <span className="text-cyan-400 font-bold">$1.0002</span>
             </span>
             <span className="hidden md:inline text-gray-500">
-              © 2024 NEXUS REWARDS - TRC20 Gateway
+              © 2024 USDT REWARDS - TRC20 Gateway
             </span>
           </div>
         </footer>

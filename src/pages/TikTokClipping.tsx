@@ -16,7 +16,11 @@ import {
   Sparkles,
   X,
   Send,
-  Coins
+  Coins,
+  Tv,
+  Lightbulb,
+  Link2,
+  ShieldAlert
 } from 'lucide-react';
 
 interface TikTokClippingProps {
@@ -158,35 +162,64 @@ export const TikTokClipping: React.FC<TikTokClippingProps> = ({ setActiveTab }) 
       </div>
 
       {/* Program Rules & Eligibility Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-6 shadow-xl space-y-2 backdrop-blur-xl">
-          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold mb-3">
-            1
-          </div>
-          <h3 className="text-base font-bold text-white">30-Day Publication Rule</h3>
-          <p className="text-xs text-gray-400 leading-relaxed">
-            The TikTok video must remain published on your TikTok channel for at least <strong className="text-cyan-400">30 days</strong>. Deleted videos will forfeit rewards.
-          </p>
+      <div className="space-y-4">
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+          <ShieldAlert className="w-5 h-5 text-cyan-400" />
+          <h2 className="text-xl font-black text-white">{t('tiktokRulesTitle')}</h2>
         </div>
 
-        <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-6 shadow-xl space-y-2 backdrop-blur-xl">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold mb-3">
-            2
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Rule 1: Talk & Show Platform */}
+          <div className="bg-white/[0.03] border border-cyan-500/30 rounded-3xl p-5 shadow-xl space-y-3 backdrop-blur-xl hover:border-cyan-400/50 transition-all">
+            <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-2">
+              <Tv className="w-5 h-5" />
+            </div>
+            <h3 className="text-sm font-black text-white flex items-center space-x-2 rtl:space-x-reverse">
+              <span>{t('ruleTalkingPlatformTitle')}</span>
+            </h3>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              {t('ruleTalkingPlatformDesc')}
+            </p>
           </div>
-          <h3 className="text-base font-bold text-white">$1.00 per 1,000 Views</h3>
-          <p className="text-xs text-gray-400 leading-relaxed">
-            Earn $1 USD for every 1,000 authentic, valid views logged in your official TikTok Studio analytics dashboard.
-          </p>
-        </div>
 
-        <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-6 shadow-xl space-y-2 backdrop-blur-xl">
-          <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-300 font-bold mb-3">
-            3
+          {/* Rule 2: Creative Intro */}
+          <div className="bg-white/[0.03] border border-purple-500/30 rounded-3xl p-5 shadow-xl space-y-3 backdrop-blur-xl hover:border-purple-400/50 transition-all">
+            <div className="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-300 mb-2">
+              <Lightbulb className="w-5 h-5" />
+            </div>
+            <h3 className="text-sm font-black text-white flex items-center space-x-2 rtl:space-x-reverse">
+              <span>{t('ruleCreativeIntroTitle')}</span>
+            </h3>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              {t('ruleCreativeIntroDesc')}
+            </p>
           </div>
-          <h3 className="text-base font-bold text-white">$20 Minimum Withdrawal</h3>
-          <p className="text-xs text-gray-400 leading-relaxed">
-            Withdrawals start at $20.00 USD. Request direct transfers to your USDT TRC20 wallet anytime threshold is reached.
-          </p>
+
+          {/* Rule 3: Site Link in Bio */}
+          <div className="bg-white/[0.03] border border-emerald-500/30 rounded-3xl p-5 shadow-xl space-y-3 backdrop-blur-xl hover:border-emerald-400/50 transition-all">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-2">
+              <Link2 className="w-5 h-5" />
+            </div>
+            <h3 className="text-sm font-black text-white flex items-center space-x-2 rtl:space-x-reverse">
+              <span>{t('ruleLinkInBioTitle')}</span>
+            </h3>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              {t('ruleLinkInBioDesc')}
+            </p>
+          </div>
+
+          {/* Rule 4: 30-Day Publication */}
+          <div className="bg-white/[0.03] border border-amber-500/30 rounded-3xl p-5 shadow-xl space-y-3 backdrop-blur-xl hover:border-amber-400/50 transition-all">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-300 mb-2">
+              <Clock className="w-5 h-5" />
+            </div>
+            <h3 className="text-sm font-black text-white flex items-center space-x-2 rtl:space-x-reverse">
+              <span>{t('rule30DaysTitle')}</span>
+            </h3>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              {t('rule30DaysDesc')}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -290,6 +323,31 @@ export const TikTokClipping: React.FC<TikTokClippingProps> = ({ setActiveTab }) 
             <p className="text-[11px] text-gray-400">
               Must be a public TikTok URL from your channel.
             </p>
+          </div>
+
+          {/* Quick Checklist Reminder */}
+          <div className="bg-black/50 border border-purple-500/20 rounded-2xl p-4 space-y-2 text-xs text-gray-300">
+            <span className="font-bold text-purple-300 uppercase tracking-wider text-[11px] block mb-1">
+              Submission Criteria Checklist:
+            </span>
+            <ul className="space-y-1.5 font-medium">
+              <li className="flex items-center space-x-2 rtl:space-x-reverse">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
+                <span>Video talks about USDT REWARDS & shows the site on screen to viewers</span>
+              </li>
+              <li className="flex items-center space-x-2 rtl:space-x-reverse">
+                <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0" />
+                <span>Video uses a creative and engaging way of introducing the platform</span>
+              </li>
+              <li className="flex items-center space-x-2 rtl:space-x-reverse">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>The site link is placed directly in your TikTok profile bio</span>
+              </li>
+              <li className="flex items-center space-x-2 rtl:space-x-reverse">
+                <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Video will remain published publicly for at least 30 days</span>
+              </li>
+            </ul>
           </div>
 
           {/* Submit Button */}

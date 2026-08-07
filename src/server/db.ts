@@ -94,7 +94,7 @@ const initialData: DatabaseSchema = {
       receiveAmount: 100,
       payAmount: 10,
       network: 'TRC20',
-      walletAddress: 'TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333',
+      walletAddress: 'TG1LiM1h3iLf654gAx1msadrDf65q2AbAC',
       status: 'Completed',
       createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
       expiresAt: new Date(Date.now() - 86400000 * 2 + 900000).toISOString(),
@@ -109,7 +109,7 @@ const initialData: DatabaseSchema = {
       receiveAmount: 250,
       payAmount: 25,
       network: 'TRC20',
-      walletAddress: 'TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333',
+      walletAddress: 'TG1LiM1h3iLf654gAx1msadrDf65q2AbAC',
       status: 'Completed',
       createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
       expiresAt: new Date(Date.now() - 86400000 * 1 + 900000).toISOString(),
@@ -145,7 +145,7 @@ const initialData: DatabaseSchema = {
     }
   ],
   settings: {
-    trc20WalletAddress: 'TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333',
+    trc20WalletAddress: 'TG1LiM1h3iLf654gAx1msadrDf65q2AbAC',
     clippingRatePer1k: 1.0,
     minWithdrawalAmount: 20.0,
     offers: defaultOffers
@@ -234,7 +234,36 @@ class DB {
 
   // Offers
   public getOffers(): USDTOffer[] {
+    const offers = this.data.settings.offers || defaultOffers;
+    const now = Date.now();
+    return offers.filter(offer => {
+      if (!offer.expiresAt) return true;
+      return new Date(offer.expiresAt).getTime() > now;
+    });
+  }
+
+  public getAllOffersAdmin(): USDTOffer[] {
     return this.data.settings.offers || defaultOffers;
+  }
+
+  public createOffer(offerData: Omit<USDTOffer, 'id'>): USDTOffer {
+    const newOffer: USDTOffer = {
+      ...offerData,
+      id: `OFFER-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+    };
+    if (!this.data.settings.offers) {
+      this.data.settings.offers = [];
+    }
+    this.data.settings.offers.push(newOffer);
+    this.saveData(this.data);
+    return newOffer;
+  }
+
+  public deleteOffer(offerId: string): void {
+    if (this.data.settings.offers) {
+      this.data.settings.offers = this.data.settings.offers.filter(o => o.id !== offerId);
+      this.saveData(this.data);
+    }
   }
 
   // Orders

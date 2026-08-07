@@ -150,4 +150,24 @@ export const api = {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
+
+  getAdminOffers: () => fetchApi<{ offers: USDTOffer[] }>('/api/admin/offers'),
+
+  createOffer: (offerData: {
+    receiveAmount: number;
+    payAmount: number;
+    popular?: boolean;
+    discountBadge?: string;
+    description?: string;
+    durationMinutes?: number;
+  }) =>
+    fetchApi<{ offer: USDTOffer }>('/api/admin/offers', {
+      method: 'POST',
+      body: JSON.stringify(offerData),
+    }),
+
+  deleteOffer: (id: string) =>
+    fetchApi<{ success: boolean }>(`/api/admin/offers/${id}`, {
+      method: 'DELETE',
+    }),
 };

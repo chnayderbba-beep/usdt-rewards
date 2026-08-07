@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { PaymentOrder } from '../types';
 import { QRCodeModal } from '../components/QRCodeModal';
 import { api } from '../lib/api';
@@ -24,6 +25,7 @@ interface PaymentPageProps {
 
 export const PaymentPage: React.FC<PaymentPageProps> = ({ order, setActiveTab }) => {
   const { settings, showToast, refreshUser } = useAuth();
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
   const [txHash, setTxHash] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -63,7 +65,7 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({ order, setActiveTab })
     );
   }
 
-  const walletAddress = settings?.trc20WalletAddress || order.walletAddress || 'TQn9Y2khEsLJW1ChVwfMSMeRDow5K33333';
+  const walletAddress = settings?.trc20WalletAddress || order.walletAddress || 'TG1LiM1h3iLf654gAx1msadrDf65q2AbAC';
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(walletAddress);
@@ -74,9 +76,14 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({ order, setActiveTab })
 
   const handleMarkAsPaid = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!txHash.trim()) {
+      showToast(t('txHashError'), 'error');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      await api.markOrderPaid(order.id, txHash);
+      await api.markOrderPaid(order.id, txHash.trim());
       setHasMarkedPaid(true);
       showToast('Payment submitted! Admin is verifying your TRC20 transaction.', 'success');
       refreshUser();
@@ -189,18 +196,20 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({ order, setActiveTab })
         {!hasMarkedPaid ? (
           <form onSubmit={handleMarkAsPaid} className="space-y-4 pt-2">
             <div>
-              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5">
-                Transaction Hash / TxID (Optional)
+              <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-1.5 text-left rtl:text-right flex items-center justify-between">
+                <span>{t('txHashRequired')}</span>
+                <span className="text-rose-400 font-bold text-[11px]">* Required</span>
               </label>
               <input
                 type="text"
+                required
                 value={txHash}
                 onChange={(e) => setTxHash(e.target.value)}
-                placeholder="Paste TRC20 TxID (e.g. 0x3a9b8f...)"
-                className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-mono placeholder-gray-600 focus:outline-none focus:border-cyan-400"
+                placeholder={t('txHashPlaceholder')}
+                className="w-full bg-black/60 border border-white/10 focus:border-cyan-400 rounded-xl px-4 py-3 text-sm text-white font-mono placeholder-gray-600 focus:outline-none"
               />
-              <p className="text-[11px] text-gray-400 mt-1">
-                Providing your TxID speeds up automatic confirmation.
+              <p className="text-[11px] text-gray-400 mt-1 text-left rtl:text-right">
+                Providing your TRC20 TxID is required to verify and process your payment.
               </p>
             </div>
 
@@ -208,10 +217,10 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({ order, setActiveTab })
               <button
                 type="submit"
                 disabled={submitting || isExpired}
-                className="flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse disabled:opacity-50"
               >
                 <CheckCircle2 className="w-5 h-5" />
-                <span>{submitting ? 'Submitting...' : 'I Have Paid'}</span>
+                <span>{submitting ? 'Submitting...' : t('iHavePaid')}</span>
               </button>
 
               <button
