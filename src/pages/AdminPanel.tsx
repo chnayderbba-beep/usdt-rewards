@@ -869,9 +869,21 @@ export const AdminPanel: React.FC = () => {
                       const isExpired = offer.expiresAt && new Date(offer.expiresAt).getTime() <= Date.now();
                       return (
                         <tr key={offer.id}>
-                          <td className="py-3 px-3 font-bold text-cyan-400">{offer.id}</td>
-                          <td className="py-3 px-3 text-white font-bold">{offer.receiveAmount} USDT</td>
-                          <td className="py-3 px-3 text-emerald-400 font-bold">${offer.payAmount} USDT</td>
+                          <td className="py-3 px-3 font-bold text-cyan-400">
+                            {offer.id}
+                            {offer.category && (
+                              <span className="block text-[10px] font-sans font-medium text-purple-400">
+                                {offer.category}
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3 px-3 text-white font-bold">
+                            {offer.title ? `${offer.title} ` : ''}
+                            {offer.receiveAmount ? `${offer.receiveAmount} USDT` : ''}
+                          </td>
+                          <td className="py-3 px-3 text-emerald-400 font-bold">
+                            ${offer.payAmount} USDT{offer.billingPeriod || ''}
+                          </td>
                           <td className="py-3 px-3 font-sans">
                             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                               {offer.discountBadge}

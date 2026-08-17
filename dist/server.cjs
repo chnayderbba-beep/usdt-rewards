@@ -32,14 +32,19 @@ var import_path = __toESM(require("path"), 1);
 var DATA_FILE = import_path.default.join(process.cwd(), "data.json");
 var defaultOffers = [
   {
-    id: "offer-1",
-    receiveAmount: 100,
-    payAmount: 10,
-    discountBadge: "90% OFF",
-    description: "Starter Boost - Get 100 USDT for just 10 USDT"
+    id: "offer-generator",
+    title: "Generator",
+    category: "Special",
+    payAmount: 100,
+    billingPeriod: "/week",
+    popular: true,
+    discountBadge: "SPECIAL OFFER",
+    description: "Generator Special Access - 100 USDT per week"
   },
   {
     id: "offer-2",
+    title: "Pro Tier",
+    category: "Standard",
     receiveAmount: 250,
     payAmount: 25,
     popular: true,
@@ -48,6 +53,8 @@ var defaultOffers = [
   },
   {
     id: "offer-3",
+    title: "VIP Trader",
+    category: "Standard",
     receiveAmount: 500,
     payAmount: 50,
     discountBadge: "90% OFF",
@@ -55,6 +62,8 @@ var defaultOffers = [
   },
   {
     id: "offer-4",
+    title: "Whale Package",
+    category: "Standard",
     receiveAmount: 1e3,
     payAmount: 100,
     discountBadge: "MAX SAVINGS",

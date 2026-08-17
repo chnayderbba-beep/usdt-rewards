@@ -15,8 +15,11 @@ export interface User {
 
 export interface USDTOffer {
   id: string;
-  receiveAmount: number;
+  title?: string;
+  category?: string; // e.g., 'Standard' | 'Special'
+  receiveAmount?: number;
   payAmount: number;
+  billingPeriod?: string; // e.g. '/week' | 'week'
   popular?: boolean;
   discountBadge: string;
   description?: string;

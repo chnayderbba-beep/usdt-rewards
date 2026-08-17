@@ -31,6 +31,32 @@
   },
   "orders": [
     {
+      "id": "ORD-694248",
+      "userId": "usr-admin",
+      "username": "admin",
+      "userEmail": "admin@cryptorewards.io",
+      "receiveAmount": 100,
+      "payAmount": 100,
+      "network": "TRC20",
+      "walletAddress": "TG1LiM1h3iLf654gAx1msadrDf65q2AbAC",
+      "status": "Pending",
+      "createdAt": "2026-08-17T01:42:21.550Z",
+      "expiresAt": "2026-08-17T01:57:21.550Z"
+    },
+    {
+      "id": "ORD-331621",
+      "userId": "usr-admin",
+      "username": "admin",
+      "userEmail": "admin@cryptorewards.io",
+      "receiveAmount": 250,
+      "payAmount": 25,
+      "network": "TRC20",
+      "walletAddress": "TG1LiM1h3iLf654gAx1msadrDf65q2AbAC",
+      "status": "Pending",
+      "createdAt": "2026-08-17T01:00:39.099Z",
+      "expiresAt": "2026-08-17T01:15:39.099Z"
+    },
+    {
       "id": "ORD-882910",
       "userId": "usr-demo",
       "username": "alexm",
@@ -94,14 +120,19 @@
     "minWithdrawalAmount": 20,
     "offers": [
       {
-        "id": "offer-1",
-        "receiveAmount": 100,
-        "payAmount": 10,
-        "discountBadge": "90% OFF",
-        "description": "Starter Boost - Get 100 USDT for just 10 USDT"
+        "id": "offer-generator",
+        "title": "Generator",
+        "category": "Special",
+        "payAmount": 100,
+        "billingPeriod": "/week",
+        "popular": true,
+        "discountBadge": "SPECIAL OFFER",
+        "description": "Generator Special Access - 100 USDT per week"
       },
       {
         "id": "offer-2",
+        "title": "Pro Tier",
+        "category": "Standard",
         "receiveAmount": 250,
         "payAmount": 25,
         "popular": true,
@@ -110,6 +141,8 @@
       },
       {
         "id": "offer-3",
+        "title": "VIP Trader",
+        "category": "Standard",
         "receiveAmount": 500,
         "payAmount": 50,
         "discountBadge": "90% OFF",
@@ -117,6 +150,8 @@
       },
       {
         "id": "offer-4",
+        "title": "Whale Package",
+        "category": "Standard",
         "receiveAmount": 1000,
         "payAmount": 100,
         "discountBadge": "MAX SAVINGS",

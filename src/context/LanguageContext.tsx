@@ -139,6 +139,15 @@ const translations: Record<Language, Record<string, string>> = {
     noOffersYet: 'No active offers available currently.',
     durationMinutes: 'Duration (Minutes)',
 
+    // Special Offer & Categories
+    specialCategory: 'Special Category',
+    standardCategory: 'Standard Packages',
+    allCategories: 'All Offers',
+    specialOfferBadge: 'Special Offer',
+    perWeek: '/week',
+    generatorOfferTitle: 'Generator',
+    generatorOfferDesc: 'Generator Special Access - 100 USDT per week',
+
     // TikTok Rules
     tiktokRulesTitle: 'Mandatory TikTok Video Rules & Guidelines',
     ruleTalkingPlatformTitle: 'Show & Talk About Platform',
@@ -278,6 +287,15 @@ const translations: Record<Language, Record<string, string>> = {
     manageOffers: 'إدارة عروض الخصم',
     noOffersYet: 'لا توجد عروض مجهزة حالياً.',
     durationMinutes: 'المدة (بالدقائق)',
+
+    // Special Offer & Categories
+    specialCategory: 'العروض الخاصة',
+    standardCategory: 'الباقات الأساسية',
+    allCategories: 'جميع العروض',
+    specialOfferBadge: 'عرض خاص',
+    perWeek: '/أسبوعياً',
+    generatorOfferTitle: 'مولّد (Generator)',
+    generatorOfferDesc: 'اشتراك Generator المميز - 100 USDT أسبوعياً',
 
     // TikTok Rules
     tiktokRulesTitle: 'الشروط والقواعد الإلزامية لفيديوهات تيك توك',

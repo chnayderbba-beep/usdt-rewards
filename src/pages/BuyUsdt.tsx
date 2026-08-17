@@ -12,7 +12,9 @@ import {
   ShieldCheck,
   CheckCircle2,
   Lock,
-  Clock
+  Clock,
+  Layers,
+  Star
 } from 'lucide-react';
 
 interface BuyUsdtProps {
@@ -24,6 +26,7 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
   const { user, showToast } = useAuth();
   const { t } = useLanguage();
   const [offers, setOffers] = useState<USDTOffer[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'special' | 'standard'>('all');
   const [loading, setLoading] = useState(false);
   const [now, setNow] = useState(Date.now());
 
@@ -66,8 +69,14 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
   };
 
   const activeOffers = offers.filter((o) => {
-    if (!o.expiresAt) return true;
-    return new Date(o.expiresAt).getTime() > now;
+    if (o.expiresAt && new Date(o.expiresAt).getTime() <= now) return false;
+    if (selectedCategory === 'special') {
+      return o.category?.toLowerCase() === 'special';
+    }
+    if (selectedCategory === 'standard') {
+      return !o.category || o.category.toLowerCase() === 'standard';
+    }
+    return true;
   });
 
   // Update calculation instantly as user types
@@ -90,15 +99,15 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
       return;
     }
 
-    if (receiveAmt <= 0 || payAmt <= 0) {
-      showToast('Please enter a valid USDT amount', 'error');
+    if (payAmt <= 0) {
+      showToast('Please enter a valid amount', 'error');
       return;
     }
 
     setLoading(true);
     try {
-      const res = await api.createOrder(receiveAmt, payAmt);
-      showToast('USDT order created! Complete payment within 15 minutes.', 'success');
+      const res = await api.createOrder(receiveAmt || payAmt, payAmt);
+      showToast('Order created! Complete payment within 15 minutes.', 'success');
       onOrderCreated(res.order);
       setActiveTab('payment-page');
     } catch (err: any) {
@@ -176,28 +185,53 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
             </div>
           </div>
         </div>
-
-        {/* Instant Buy Calculated Amount Button */}
-        <button
-          onClick={() =>
-            handleCreateOrder(Number(desiredUsdt) || 0, customPayAmount)
-          }
-          disabled={loading || !desiredUsdt || Number(desiredUsdt) <= 0}
-          className="mt-6 w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:brightness-110 text-black font-extrabold text-sm sm:text-base shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse disabled:opacity-50"
-        >
-          <span>{t('buyNow')} ({desiredUsdt || 0} USDT - ${customPayAmount} USDT)</span>
-          <ArrowRight className="w-5 h-5 rtl:rotate-180" />
-        </button>
       </div>
 
       {/* --- PRE-DEFINED OFFER CARDS --- */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-black text-white flex items-center space-x-2 rtl:space-x-reverse">
-            <Coins className="w-5 h-5 text-cyan-400" />
-            <span>{t('discountOffers')}</span>
-          </h2>
-          <span className="text-xs text-gray-400 font-mono">TRC20 Instant Delivery</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-xl font-black text-white flex items-center space-x-2 rtl:space-x-reverse">
+              <Coins className="w-5 h-5 text-cyan-400" />
+              <span>{t('discountOffers')}</span>
+            </h2>
+            <p className="text-xs text-gray-400 mt-0.5">TRC20 Instant Delivery</p>
+          </div>
+
+          {/* Category Filter Tabs */}
+          <div className="flex items-center space-x-2 rtl:space-x-reverse bg-black/50 border border-white/10 p-1 rounded-2xl w-fit">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                selectedCategory === 'all'
+                  ? 'bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.4)]'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              {t('allCategories')}
+            </button>
+            <button
+              onClick={() => setSelectedCategory('special')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 rtl:space-x-reverse ${
+                selectedCategory === 'special'
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                  : 'text-purple-300 hover:text-white'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+              <span>{t('specialCategory')}</span>
+            </button>
+            <button
+              onClick={() => setSelectedCategory('standard')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                selectedCategory === 'standard'
+                  ? 'bg-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.4)]'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              {t('standardCategory')}
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -209,12 +243,15 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
           ) : (
             activeOffers.map((offer) => {
               const remainingTimeStr = offer.expiresAt ? formatRemainingTime(offer.expiresAt) : null;
+              const isSpecial = offer.category?.toLowerCase() === 'special';
 
               return (
                 <div
                   key={offer.id}
                   className={`bg-white/[0.03] border rounded-3xl p-6 relative flex flex-col justify-between backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${
-                    offer.popular
+                    isSpecial
+                      ? 'border-purple-500/50 shadow-2xl shadow-purple-500/10 ring-1 ring-purple-500/30'
+                      : offer.popular
                       ? 'border-emerald-500/50 shadow-2xl shadow-emerald-500/10 ring-1 ring-emerald-500/30'
                       : 'border-white/5 hover:border-cyan-500/40 shadow-xl'
                   }`}
@@ -223,7 +260,9 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
                   <div className="flex items-center justify-between -mt-3 mb-2">
                     <div
                       className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg ${
-                        offer.popular
+                        isSpecial
+                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                          : offer.popular
                           ? 'bg-emerald-500 text-black'
                           : 'bg-cyan-500 text-black'
                       }`}
@@ -241,18 +280,40 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
 
                   <div className="mt-2 space-y-4">
                     <div>
-                      <span className="text-xs text-gray-400 uppercase font-bold tracking-wider block">
-                        {t('receive')}
-                      </span>
-                      <div className="text-3xl font-black text-cyan-400 font-mono mt-1">
-                        {offer.receiveAmount} <span className="text-sm text-gray-300 font-sans font-bold">USDT</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400 uppercase font-bold tracking-wider block">
+                          {offer.title || (isSpecial ? 'Special Offer' : t('receive'))}
+                        </span>
+                        {isSpecial && (
+                          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            {t('specialCategory')}
+                          </span>
+                        )}
                       </div>
+
+                      {offer.receiveAmount ? (
+                        <div className="text-3xl font-black text-cyan-400 font-mono mt-1">
+                          {offer.receiveAmount} <span className="text-sm text-gray-300 font-sans font-bold">USDT</span>
+                        </div>
+                      ) : (
+                        <div className="text-3xl font-black text-purple-300 font-sans mt-1">
+                          {offer.title || 'Generator'}
+                        </div>
+                      )}
                     </div>
 
-                    <div className="bg-black/40 rounded-2xl p-3 border border-white/10">
-                      <span className="text-xs text-gray-400 block font-medium">{t('payOnly')}</span>
-                      <span className="text-xl font-black text-white font-mono">
-                        {offer.payAmount} USDT
+                    <div className={`rounded-2xl p-3 border ${
+                      isSpecial
+                        ? 'bg-purple-950/30 border-purple-500/30'
+                        : 'bg-black/40 border-white/10'
+                    }`}>
+                      <span className="text-xs text-gray-400 block font-medium">
+                        {isSpecial ? 'Price' : t('payOnly')}
+                      </span>
+                      <span className={`text-xl font-black font-mono ${
+                        isSpecial ? 'text-purple-300' : 'text-white'
+                      }`}>
+                        {offer.payAmount} USDT{offer.billingPeriod || ''}
                       </span>
                     </div>
 
@@ -262,10 +323,12 @@ export const BuyUsdt: React.FC<BuyUsdtProps> = ({ setActiveTab, onOrderCreated }
                   </div>
 
                   <button
-                    onClick={() => handleCreateOrder(offer.receiveAmount, offer.payAmount)}
+                    onClick={() => handleCreateOrder(offer.receiveAmount || offer.payAmount, offer.payAmount)}
                     disabled={loading}
                     className={`mt-6 w-full py-3 px-4 rounded-2xl font-black text-xs transition-all flex items-center justify-center space-x-2 rtl:space-x-reverse ${
-                      offer.popular
+                      isSpecial
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:brightness-110 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)]'
+                        : offer.popular
                         ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_15px_rgba(34,197,94,0.3)]'
                         : 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)]'
                     }`}
